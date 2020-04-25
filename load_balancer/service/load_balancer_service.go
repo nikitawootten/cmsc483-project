@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"github.com/nikitawootten/cmsc483-project/common"
 	"github.com/nikitawootten/cmsc483-project/load_balancer/scheduler"
+	"log"
 	"net/http"
 )
 
@@ -23,6 +24,7 @@ func NewLoadBalancer(parentAddr string, algorithm scheduler.IScheduler) LoadBala
 
 func (lb *LoadBalancer) BuildNewClientFunc() func(w http.ResponseWriter, r *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
+		log.Println("New Client!")
 		var client common.NewClientReq
 
 		err := json.NewDecoder(r.Body).Decode(&client)
@@ -39,6 +41,7 @@ func (lb *LoadBalancer) BuildNewClientFunc() func(w http.ResponseWriter, r *http
 
 func (lb *LoadBalancer) BuildNewConnectionFunc() func(w http.ResponseWriter, r *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
+		log.Print("New Connection!")
 		rp, err := lb.scheduler.GetNext(r)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)

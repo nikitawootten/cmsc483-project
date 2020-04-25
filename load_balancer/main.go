@@ -22,7 +22,7 @@ func main() {
 	lb := service.NewLoadBalancer(*parentAddress, alg)
 
 	// the parent communication system (register a client, get list of active clients)
-	http.HandleFunc("/client", lb.BuildNewConnectionFunc())
+	http.HandleFunc("/client", lb.BuildNewClientFunc())
 
 	// the load balancer itself
 	http.HandleFunc("/", lb.BuildNewConnectionFunc())

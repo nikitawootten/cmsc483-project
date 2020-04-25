@@ -14,6 +14,8 @@ type IScheduler interface {
 
 const RoundRobin = "round-robin"
 
+var ErrNoClients = errors.New("no clients to load balance")
+
 func GetSchedulerByName(algorithm string) (IScheduler, error) {
 	switch algorithm {
 	case RoundRobin:

@@ -12,6 +12,7 @@ import (
 )
 
 func helloWorld(w http.ResponseWriter, _ *http.Request) {
+	log.Println("New request!")
 	_, err := fmt.Fprintf(w, "hi there!")
 	if err != nil {
 		log.Fatal(err)
@@ -39,7 +40,7 @@ func main() {
 	flag.Parse()
 
 	if *parentAddress != "" {
-		err := makeKnownToParent("http://0.0.0.0:8081/client", *parentAddress)
+		err := makeKnownToParent("http://0.0.0.0:8081", *parentAddress+"/client")
 		if err != nil {
 			log.Fatal(err)
 		}
