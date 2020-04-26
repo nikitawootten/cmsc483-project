@@ -1,40 +1,53 @@
 package service
 
 import (
-	"encoding/json"
 	"github.com/nikitawootten/cmsc483-project/common"
 	"github.com/nikitawootten/cmsc483-project/load_balancer/scheduler"
+	"golang.org/x/net/websocket"
 	"log"
 	"net/http"
+	"time"
 )
 
 type LoadBalancer struct {
 	parentAddr string
 	scheduler  scheduler.IScheduler
-	clients    []string
 }
 
 func NewLoadBalancer(parentAddr string, algorithm scheduler.IScheduler) LoadBalancer {
 	return LoadBalancer{
 		parentAddr: parentAddr,
 		scheduler:  algorithm,
-		clients:    []string{},
 	}
 }
 
-func (lb *LoadBalancer) BuildNewClientFunc() func(w http.ResponseWriter, r *http.Request) {
-	return func(w http.ResponseWriter, r *http.Request) {
-		log.Println("New Client!")
-		var client common.NewClientReq
+func (lb *LoadBalancer) BuildClientHandlerFunc() websocket.Handler {
+	return func(ws *websocket.Conn) {
+		log.Printf("Client connected from %s, receiving clientReq data...\n", ws.RemoteAddr())
 
-		err := json.NewDecoder(r.Body).Decode(&client)
+		var clientReq common.NewClientReq
+		err := websocket.JSON.Receive(ws, &clientReq)
 		if err != nil {
-			http.Error(w, err.Error(), http.StatusBadRequest)
+			log.Printf("Error: Malformed clientReq handshake: %s, killing connection\n", err.Error())
 			return
 		}
-		err = lb.scheduler.NewClient(client)
+
+		client := scheduler.NewClient(clientReq)
+		err = lb.scheduler.NewClient(&client)
 		if err != nil {
-			http.Error(w, err.Error(), http.StatusBadRequest)
+			log.Printf("Error: Could not add clientReq: %s, killing connection\n", err.Error())
+		}
+
+		for {
+			var heartbeat common.ClientHeartbeat
+			err := websocket.JSON.Receive(ws, &heartbeat)
+			if err != nil {
+				log.Printf("Warning: Malformed heartbeat: %s, continuing\n", err.Error())
+				time.Sleep(time.Second)
+				continue
+			}
+
+			// TODO update metrics
 		}
 	}
 }
@@ -42,11 +55,11 @@ func (lb *LoadBalancer) BuildNewClientFunc() func(w http.ResponseWriter, r *http
 func (lb *LoadBalancer) BuildNewConnectionFunc() func(w http.ResponseWriter, r *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 		log.Print("New Connection!")
-		rp, err := lb.scheduler.GetNext(r)
+		client, err := lb.scheduler.GetNext(r)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 		} else {
-			rp.ServeHTTP(w, r)
+			client.Proxy.ServeHTTP(w, r)
 		}
 	}
 }

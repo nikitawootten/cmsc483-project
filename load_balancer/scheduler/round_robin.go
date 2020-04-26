@@ -1,15 +1,13 @@
 package scheduler
 
 import (
-	"github.com/nikitawootten/cmsc483-project/common"
 	"log"
 	"net/http"
-	"net/http/httputil"
 	"sync/atomic"
 )
 
 type RoundRobinScheduler struct {
-	proxies []*httputil.ReverseProxy
+	clients []*Client
 	count   uint32 // atomic connection count
 }
 
@@ -17,21 +15,20 @@ func NewRoundRobinScheduler() *RoundRobinScheduler {
 	return &RoundRobinScheduler{}
 }
 
-func (rr *RoundRobinScheduler) NewClient(client common.NewClientReq) error {
-	rp := httputil.NewSingleHostReverseProxy(client.Address)
-	rr.proxies = append(rr.proxies, rp)
+func (rr *RoundRobinScheduler) NewClient(client *Client) error {
+	rr.clients = append(rr.clients, client)
 	return nil
 }
 
 // GetNext does not use any information about the request, so the input is ignored
-func (rr *RoundRobinScheduler) GetNext(_ *http.Request) (*httputil.ReverseProxy, error) {
-	if len(rr.proxies) == 0 {
+func (rr *RoundRobinScheduler) GetNext(_ *http.Request) (*Client, error) {
+	if len(rr.clients) == 0 {
 		return nil, ErrNoClients
 	}
 
 	count := atomic.AddUint32(&rr.count, 1)
-	index := int(count) % len(rr.proxies)
-	ret := rr.proxies[index]
+	index := int(count) % len(rr.clients)
+	ret := rr.clients[index]
 	log.Println(index, count)
 	return ret, nil
 }

@@ -1,30 +1,27 @@
 package scheduler
 
 import (
-	"github.com/nikitawootten/cmsc483-project/common"
 	"math/rand"
 	"net/http"
-	"net/http/httputil"
 )
 
 type RandomScheduler struct {
-	proxies []*httputil.ReverseProxy
+	clients []*Client
 }
 
 func NewRandomScheduler() *RandomScheduler {
 	return &RandomScheduler{}
 }
 
-func (r *RandomScheduler) NewClient(client common.NewClientReq) error {
-	rp := httputil.NewSingleHostReverseProxy(client.Address)
-	r.proxies = append(r.proxies, rp)
+func (r *RandomScheduler) NewClient(client *Client) error {
+	r.clients = append(r.clients, client)
 	return nil
 }
 
-func (r *RandomScheduler) GetNext(_ *http.Request) (*httputil.ReverseProxy, error) {
-	if len(r.proxies) == 0 {
+func (r *RandomScheduler) GetNext(_ *http.Request) (*Client, error) {
+	if len(r.clients) == 0 {
 		return nil, ErrNoClients
 	}
 
-	return r.proxies[rand.Intn(len(r.proxies))], nil
+	return r.clients[rand.Intn(len(r.clients))], nil
 }

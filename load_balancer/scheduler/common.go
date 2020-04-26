@@ -7,9 +7,23 @@ import (
 	"net/http/httputil"
 )
 
+type Client struct {
+	Proxy     httputil.ReverseProxy
+	Init      common.NewClientReq
+	Heartbeat common.ClientHeartbeat
+}
+
+func NewClient(init common.NewClientReq) Client {
+	rp := httputil.NewSingleHostReverseProxy(init.Address)
+	return Client{
+		Proxy: *rp,
+		Init:  init,
+	}
+}
+
 type IScheduler interface {
-	NewClient(client common.NewClientReq) error
-	GetNext(r *http.Request) (*httputil.ReverseProxy, error)
+	NewClient(client *Client) error
+	GetNext(r *http.Request) (*Client, error)
 }
 
 const (
