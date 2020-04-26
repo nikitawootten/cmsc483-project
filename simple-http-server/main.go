@@ -9,11 +9,32 @@ import (
 	"net/http"
 	"net/url"
 	"time"
+	"math/rand"
+	"strconv"
 )
+
+func fib(n int) int {
+	varOne := 0
+	varTwo := 1
+	for i := 0; i < n; i++ {
+		temp := varOne
+		varOne = varTwo
+		varTwo = temp + varOne
+	}
+	return varOne
+}
 
 func helloWorld(w http.ResponseWriter, _ *http.Request) {
 	log.Println("New request!")
 	_, err := fmt.Fprintf(w, "hi there!")
+	
+	fmt.Fprintf(w, "\n")
+	rand.Seed(time.Now().UTC().UnixNano())
+	for i := 0; i < (rand.Intn(100 - 90) + 90); i++ {
+
+		fmt.Fprintf(w, strconv.Itoa(fib(i)) + " ")
+	}
+	
 	if err != nil {
 		log.Fatal(err)
 	}
