@@ -1,7 +1,7 @@
 package main
 
 import (
-	"flag"
+	"github.com/nikitawootten/cmsc483-project/common"
 	"github.com/nikitawootten/cmsc483-project/load_balancer/scheduler"
 	"github.com/nikitawootten/cmsc483-project/load_balancer/service"
 	"log"
@@ -9,17 +9,17 @@ import (
 )
 
 func main() {
-	// parse flags
-	var parentAddress = flag.String("parentAddress", "", "parent to connect to (empty for no parent)")
-	var algorithm = flag.String("algorithm", scheduler.RoundRobin, "which scheduling algorithm to use")
-	var address = flag.String("address", ":8080", "address of self")
-	flag.Parse()
+	req, lbs, address, algorithm, err := common.ParseFlagsLB()
+	if err != nil {
+		log.Fatal("Failed to parse args:", err)
+	}
+	common.ConnectToParentLBs(req, lbs)
 
-	alg, err := scheduler.GetSchedulerByName(*algorithm)
+	alg, err := scheduler.GetSchedulerByName(algorithm)
 	if err != nil {
 		log.Fatal(err)
 	}
-	lb := service.NewLoadBalancer(*parentAddress, alg)
+	lb := service.NewLoadBalancer(alg)
 
 	// the parent communication system (register a client, get list of active clients)
 	http.Handle("/client", lb.BuildClientHandlerFunc())
@@ -27,9 +27,9 @@ func main() {
 	// the load balancer itself
 	http.HandleFunc("/", lb.BuildNewConnectionFunc())
 
-	log.Println("Mapped routes, listening on ", *address)
+	log.Println("Mapped routes, listening on ", address)
 
-	err = http.ListenAndServe(*address, nil)
+	err = http.ListenAndServe(address, nil)
 	if err != nil {
 		log.Fatal(err)
 	}

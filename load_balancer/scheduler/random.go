@@ -14,6 +14,13 @@ func NewRandomScheduler() *RandomScheduler {
 }
 
 func (r *RandomScheduler) NewClient(client *Client) error {
+	for i, currClient := range r.clients {
+		if currClient.Init.Address == client.Init.Address {
+			// existing client found, replace with new client
+			r.clients[i] = client
+			return nil
+		}
+	}
 	r.clients = append(r.clients, client)
 	return nil
 }

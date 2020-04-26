@@ -16,6 +16,13 @@ func NewRoundRobinScheduler() *RoundRobinScheduler {
 }
 
 func (rr *RoundRobinScheduler) NewClient(client *Client) error {
+	for i, currClient := range rr.clients {
+		if currClient.Init.Address == client.Init.Address {
+			// existing client found, replace with new client
+			rr.clients[i] = client
+			return nil
+		}
+	}
 	rr.clients = append(rr.clients, client)
 	return nil
 }

@@ -14,10 +14,9 @@ type LoadBalancer struct {
 	scheduler  scheduler.IScheduler
 }
 
-func NewLoadBalancer(parentAddr string, algorithm scheduler.IScheduler) LoadBalancer {
+func NewLoadBalancer(algorithm scheduler.IScheduler) LoadBalancer {
 	return LoadBalancer{
-		parentAddr: parentAddr,
-		scheduler:  algorithm,
+		scheduler: algorithm,
 	}
 }
 
@@ -38,14 +37,29 @@ func (lb *LoadBalancer) BuildClientHandlerFunc() websocket.Handler {
 			log.Printf("Error: Could not add clientReq: %s, killing connection\n", err.Error())
 		}
 
+		defer func() {
+			client.Active = false
+			log.Printf("Disconnecting from client at address: %s", clientReq.Address)
+			err = ws.Close()
+			if err != nil {
+				log.Printf("Error: Could not close connection: %s, conneciton killed\n", err.Error())
+			}
+		}()
+
+		errCount := 0
 		for {
 			var heartbeat common.ClientHeartbeat
 			err := websocket.JSON.Receive(ws, &heartbeat)
 			if err != nil {
 				log.Printf("Warning: Malformed heartbeat: %s, continuing\n", err.Error())
+				errCount += 1
+				if errCount > 3 {
+					return // kill connection
+				}
 				time.Sleep(time.Second)
 				continue
 			}
+			errCount = 0
 
 			// TODO update metrics
 		}

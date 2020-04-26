@@ -8,6 +8,7 @@ import (
 )
 
 type Client struct {
+	Active    bool
 	Proxy     httputil.ReverseProxy
 	Init      common.NewClientReq
 	Heartbeat common.ClientHeartbeat
@@ -16,8 +17,9 @@ type Client struct {
 func NewClient(init common.NewClientReq) Client {
 	rp := httputil.NewSingleHostReverseProxy(init.Address)
 	return Client{
-		Proxy: *rp,
-		Init:  init,
+		Active: true,
+		Proxy:  *rp,
+		Init:   init,
 	}
 }
 
