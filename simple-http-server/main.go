@@ -15,18 +15,14 @@ import (
 	"os"
 )
 
-
-
 func helloWorld(w http.ResponseWriter, _ *http.Request) {
 	log.Println("New request!")
 	_, err := fmt.Fprintf(w, "hi there!\n")
-
 
 	f, err := os.Open("./simple-http-server/img/pitt.jpg")
 	if err != nil {
 		log.Fatal(err)
 	}
-
 
 	imgIn, _, err := image.Decode(f)
 	if err != nil {
@@ -46,16 +42,15 @@ func helloWorld(w http.ResponseWriter, _ *http.Request) {
 	}
 }
 
-
 func resizerFunc(imgIn image.Image, len int, wid int) image.Image {
 	minXVal := imgIn.Bounds().Min.X
 	minYVal := imgIn.Bounds().Min.Y
 	maxXVal := imgIn.Bounds().Max.X
 	maxYVal := imgIn.Bounds().Max.Y
-	for (maxXVal-minXVal) % len != 0 {
+	for (maxXVal-minXVal)%len != 0 {
 		maxXVal--
 	}
-	for (maxYVal-minYVal) % wid != 0 {
+	for (maxYVal-minYVal)%wid != 0 {
 		maxYVal--
 	}
 	scaleXVal := (maxXVal - minXVal) / len
@@ -75,7 +70,7 @@ func resizerFunc(imgIn image.Image, len int, wid int) image.Image {
 
 func avgColor(imgIn image.Image, minX int, maxX int, minY int, maxY int) color.Color {
 	var avgR, avgG, avgB, avgAlpha float64
-	scale := 1.0 / float64((maxX-minX) * (maxY-minY))
+	scale := 1.0 / float64((maxX-minX)*(maxY-minY))
 
 	for i := minX; i < maxX; i++ {
 		for k := minY; k < maxY; k++ {
@@ -101,7 +96,6 @@ func avgColor(imgIn image.Image, minX int, maxX int, minY int, maxY int) color.C
 	return avgColor
 }
 
-
 func imgToBytes(imgIn image.Image) []byte {
 	var optimize jpeg.Options
 	optimize.Quality = 100
@@ -114,9 +108,8 @@ func imgToBytes(imgIn image.Image) []byte {
 	return newBuffer.Bytes()
 }
 
-
 func main() {
-	req, lbs, address, err := common.ParseFlagsClient()
+	req, lbs, address, _, err := common.ParseFlags(false)
 	if err != nil {
 		log.Fatal("Failed to parse args:", err)
 	}
@@ -127,7 +120,6 @@ func main() {
 	fs := http.FileServer(http.Dir("./simple-http-server/img"))
 
 	http.Handle("/imgs", http.StripPrefix("/imgs", fs))
-
 
 	log.Println("Mapped routes, listening on ", address)
 

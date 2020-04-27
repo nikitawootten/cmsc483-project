@@ -9,7 +9,7 @@ import (
 )
 
 func main() {
-	req, lbs, address, algorithm, err := common.ParseFlagsLB()
+	req, lbs, address, algorithm, err := common.ParseFlags(true)
 	if err != nil {
 		log.Fatal("Failed to parse args:", err)
 	}
