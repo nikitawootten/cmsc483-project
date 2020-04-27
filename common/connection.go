@@ -1,6 +1,7 @@
 package common
 
 import (
+	"fmt"
 	"golang.org/x/net/websocket"
 	"log"
 	"time"
@@ -11,11 +12,14 @@ const reconnectTimeout = time.Second * 3
 
 func ConnectToParentLBs(req NewClientReq, lbs []string) {
 	for _, lb := range lbs {
-		go MakeKnownToParent(req, req.Address.String(), "ws://"+lb+"/client")
+		go MakeKnownToParent(req, lb)
 	}
 }
 
-func MakeKnownToParent(req NewClientReq, origin, parentAddress string) {
+func MakeKnownToParent(req NewClientReq, parentAddress string) {
+	origin := fmt.Sprint(req.Address.String())
+	parentAddress = fmt.Sprint("ws://", parentAddress, "/client")
+
 	connectFails := 0
 	for {
 		if connectFails > maxConnectFails {

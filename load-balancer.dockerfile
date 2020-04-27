@@ -5,6 +5,8 @@ ENV GO111MODULE=on \
     GOOS=linux \
     GOARCH=amd64
 
+RUN apk add --no-cache bash
+
 WORKDIR /build
 
 COPY go.mod .
@@ -18,6 +20,7 @@ RUN go build -o main load_balancer/main.go
 
 WORKDIR /dist
 
+RUN cp /build/entrypoint.sh .
 RUN cp /build/main .
 
-ENTRYPOINT ["/dist/main"]
+ENTRYPOINT ["/dist/entrypoint.sh"]

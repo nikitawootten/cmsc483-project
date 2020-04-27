@@ -4,6 +4,7 @@ import (
 	"flag"
 	"fmt"
 	"net/url"
+	"os"
 )
 
 // see https://stackoverflow.com/questions/28322997/how-to-get-a-list-of-values-into-a-flag-in-golang
@@ -39,7 +40,12 @@ func ParseFlags(isLB bool) (NewClientReq, []string, string, string, error) {
 	selfWebAddress := fmt.Sprintf(":%d", *port)
 
 	if len(parentLBs) > 0 {
-		callbackAddressUrl, err := url.Parse(*callbackAddress)
+		if *callbackAddress == "" {
+			*callbackAddress = os.Getenv("IP_ADDR")
+			*callbackAddress = fmt.Sprint(*callbackAddress, ":", *port)
+		}
+
+		callbackAddressUrl, err := url.Parse(fmt.Sprint("http://", *callbackAddress))
 		if err != nil {
 			return NewClientReq{}, nil, "", "", err
 		}
