@@ -22,7 +22,7 @@ func (i *arrayFlags) Set(value string) error {
 func ParseFlags(isLB bool) (NewClientReq, []string, string, string, error) {
 	var parentLBs = arrayFlags{}
 	flag.Var(&parentLBs, "parentLB", "Parent load balancers to attempt to connect to, protocol and endpoint will be added automatically (ex. 0.0.0.0:8080)")
-	var port = flag.Int("port", 8081, "Port of machine")
+	var port = flag.Int("port", 8080, "Port of machine")
 
 	// Needed to build NewClientReq
 	var weight = flag.Int("weight", 1, "Weighted-round-robin weight definition to parent LB(s)")

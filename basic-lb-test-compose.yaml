@@ -2,9 +2,8 @@ version: "3"
 services:
   root-lb:
     image: cmsc483-project/load-balancer
-    command: -port 8080
     ports:
       - "8080:8080"
   client:
     image: cmsc483-project/simple-http-server
-    command: -port 8081 -parentLB root-lb:8080
+    command: -parentLB root-lb:8080
