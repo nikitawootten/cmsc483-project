@@ -11,7 +11,7 @@ const reconnectTimeout = time.Second * 3
 
 func ConnectToParentLBs(req NewClientReq, lbs []string) {
 	for _, lb := range lbs {
-		go MakeKnownToParent(req, "http://"+lb, "ws://"+lb+"/client")
+		go MakeKnownToParent(req, req.Address.String(), "ws://"+lb+"/client")
 	}
 }
 

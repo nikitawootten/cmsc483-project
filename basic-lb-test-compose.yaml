@@ -1,0 +1,7 @@
+version: "3"
+services:
+  root-lb:
+    image: cmsc483-project/load-balancer
+    command: -webServerAddress :8080
+    expose:
+      - "8080"

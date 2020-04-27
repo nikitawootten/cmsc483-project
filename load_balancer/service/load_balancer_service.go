@@ -31,6 +31,8 @@ func (lb *LoadBalancer) BuildClientHandlerFunc() websocket.Handler {
 			return
 		}
 
+		log.Print("addr: ", ws.Config().Origin)
+
 		client := scheduler.NewClient(clientReq)
 		err = lb.scheduler.NewClient(&client)
 		if err != nil {
