@@ -1,42 +1,37 @@
 package main
 
 import (
-	"bytes"
 	"fmt"
 	"github.com/nikitawootten/cmsc483-project/common"
 	"image"
 	"image/color"
 	"image/draw"
 	"image/jpeg"
-	"io/ioutil"
 	"log"
 	"math"
 	"net/http"
-	"os"
 )
 
-func helloWorld(w http.ResponseWriter, _ *http.Request) {
+func resizeImageEndpoint(w http.ResponseWriter, r *http.Request) {
 	log.Println("New request!")
-	_, err := fmt.Fprintf(w, "hi there!\n")
 
-	f, err := os.Open("./simple-http-server/img/pitt.jpg")
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	imgIn, _, err := image.Decode(f)
+	imgIn, err := jpeg.Decode(r.Body)
 	if err != nil {
 		log.Fatal(err)
 	}
 
 	resizedImg := resizerFunc(imgIn, 640, 480)
-	bytesOfImg := imgToBytes(resizedImg)
-	fmt.Fprintf(w, "Resizing image to 640x480")
-	err = ioutil.WriteFile("./simple-http-server/img/pitt640x480.jpg", bytesOfImg, 777)
+
+	err = jpeg.Encode(w, resizedImg, &jpeg.Options{Quality: 100})
 	if err != nil {
 		log.Fatal(err)
 	}
+}
 
+func helloWorldEndpoint(w http.ResponseWriter, _ *http.Request) {
+	log.Println("New request!")
+
+	_, err := fmt.Fprint(w, "Hello there!")
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -96,18 +91,6 @@ func avgColor(imgIn image.Image, minX int, maxX int, minY int, maxY int) color.C
 	return avgColor
 }
 
-func imgToBytes(imgIn image.Image) []byte {
-	var optimize jpeg.Options
-	optimize.Quality = 100
-	newBuffer := bytes.NewBuffer(nil)
-	err := jpeg.Encode(newBuffer, imgIn, &optimize)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	return newBuffer.Bytes()
-}
-
 func main() {
 	req, lbs, address, _, err := common.ParseFlags(false)
 	if err != nil {
@@ -115,11 +98,8 @@ func main() {
 	}
 	common.ConnectToParentLBs(req, lbs)
 
-	http.HandleFunc("/hello", helloWorld)
-
-	fs := http.FileServer(http.Dir("./simple-http-server/img"))
-
-	http.Handle("/imgs", http.StripPrefix("/imgs", fs))
+	http.HandleFunc("/resize", resizeImageEndpoint)
+	http.HandleFunc("/hello_world", helloWorldEndpoint)
 
 	log.Println("Mapped routes, listening on ", address)
 
