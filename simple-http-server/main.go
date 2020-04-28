@@ -10,7 +10,37 @@ import (
 	"log"
 	"math"
 	"net/http"
+	"strconv"
+	"math/rand"
 )
+
+
+func fib(n int) int {
+	varOne := 0
+	varTwo := 1
+	for i := 0; i < n; i++ {
+		temp := varOne
+		varOne = varTwo
+		varTwo = temp + varOne
+	}
+	return varOne
+}
+
+func fibonacciEndpoint(w http.ResponseWriter, _ *http.Request) {
+	log.Println("New request!")
+	fmt.Fprintf(w, "Fibonacci number test\n")
+	for i := 0; i < (rand.Intn(80 - 50) + 50); i++ {
+
+		fmt.Fprintf(w, strconv.Itoa(fib(i)) + " ")
+
+	}
+
+	_, err := fmt.Fprint(w, "\n")
+	if err != nil {
+		log.Fatal(err)
+	}
+}
+
 
 func resizeImageEndpoint(w http.ResponseWriter, r *http.Request) {
 	log.Println("New request!")
@@ -100,7 +130,9 @@ func main() {
 
 	http.HandleFunc("/resize", resizeImageEndpoint)
 	http.HandleFunc("/hello_world", helloWorldEndpoint)
+	http.HandleFunc("/fib", fibonacciEndpoint)
 
+	
 	log.Println("Mapped routes, listening on ", address)
 
 	err = http.ListenAndServe(address, nil)
