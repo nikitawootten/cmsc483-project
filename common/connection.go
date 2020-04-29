@@ -21,7 +21,6 @@ func MakeKnownToParent(req NewClientReq, parentAddress string, heartbeat *Client
 	parentAddress = fmt.Sprint("ws://", parentAddress, "/client")
 
 	connectFails := 0
-	go executeCronJob()
 	for {
 		if connectFails > maxConnectFails {
 			log.Printf("Maximum retries reached, cancelling connection attempts to parent")
@@ -66,5 +65,7 @@ func MakeKnownToParent(req NewClientReq, parentAddress string, heartbeat *Client
 
 		log.Printf("Disconnected from lb %s, sleeping before attempting to reconnect!\n", parentAddress)
 		time.Sleep(reconnectTimeout)
+		//log.Printf("Disconnected from lb %s, sleeping before attempting to reconnect!\n", parentAddress)
+		//time.Sleep(reconnectTimeout)t
 	}
 }

@@ -6,7 +6,6 @@ import (
 	"github.com/nikitawootten/cmsc483-project/load_balancer/service"
 	"log"
 	"net/http"
-	"github.com/jasonlvhit/gocron"
 )
 
 func main() {
@@ -25,7 +24,7 @@ func main() {
 	connCount := common.NewConnectionCounterFromHeartbeat(&heartbeat)
 
 	go executeCronJob()
-	
+
 	// the parent communication system (register a client, get list of active clients)
 	http.Handle("/client", lb.BuildClientHandlerFunc())
 	// the load balancer itself, wrapped by the connection counter
@@ -33,8 +32,11 @@ func main() {
 
 	log.Println("Mapped routes, listening on ", address)
 
+
 	common.ConnectToParentLBs(req, lbs, &heartbeat)
 
+
+	common.SendMetrics()
 	err = http.ListenAndServe(address, nil)
 	if err != nil {
 		log.Fatal(err)

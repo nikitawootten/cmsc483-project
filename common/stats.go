@@ -12,18 +12,22 @@ import (
  )
 
 
- func sendMetrics(){
+ func SendMetrics(){
  	vmStat, err := mem.VirtualMemory()
  	cpuStat, err := cpu.Info()
+ 	percentage, err := cpu.Percent(0, true)
+ 	for _,cpu := range percentage {
+		log.Println(strconv.FormatFloat(cpu, 'f', 6, 64))
+	}
+ 	
 
- 	var filename ="../logs/process" + strconv.FormatInt(int64(cpuStat[0].CPU), 10) + "log.csv"
+ 	var filename ="logs/process" + strconv.FormatInt(int64(cpuStat[0].CPU), 10) + "log.csv"
  	f, err := os.OpenFile(filename,os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
 	if err != nil {
 		log.Println(err)
 	}
 	fi, err := f.Stat()
 	csvwriter := csv.NewWriter(f)
-	percentage, err := cpu.Percent(0, true)
 	var row = []string{}
 	if fi.Size() == 0{
 		row = []string{
@@ -45,7 +49,7 @@ import (
 	f.Close()
  }
 
- func executeCronJob() {
-    gocron.Every(2).Second().Do(sendMetrics)
+ func ExecuteCronJob() {
+    gocron.Every(2).Second().Do(SendMetrics)
     <- gocron.Start()
 }
