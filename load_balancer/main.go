@@ -28,9 +28,10 @@ func main() {
 	http.HandleFunc("/", lb.BuildNewConnectionFunc())
 
 	log.Println("Mapped routes, listening on ", address)
-	common.SendMetrics()
+	go common.ExecuteCronJob()
 	err = http.ListenAndServe(address, nil)
 	if err != nil {
 		log.Fatal(err)
 	}
+
 }
