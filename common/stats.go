@@ -1,4 +1,4 @@
-package common
+package stats
 
 import (
          "strconv"
@@ -8,11 +8,25 @@ import (
          "os"
          "encoding/csv"
          "time"
-         "github.com/jasonlvhit/gocron"
+         // "github.com/jasonlvhit/gocron"
  )
 
+type Stats struct{
+	Time string
+	CpuNum int
+	TotalMem int
+	FreeMem int
+	MemPercent float32
+	CpuPercents []float32
 
- func SendMetrics(){
+}
+
+func New(Time string, CpuNum int, TotalMem int,FreeMem int, MemPercent float32, CpuPercents []float32) Stats {  
+    s := Stats {Time, CpuNum , TotalMem ,FreeMem , MemPercent , CpuPercents}
+    return s
+}
+
+func (s Stats) SendMetrics(){
  	vmStat, err := mem.VirtualMemory()
  	cpuStat, err := cpu.Info()
  	percentage, err := cpu.Percent(0, true)
@@ -40,8 +54,16 @@ import (
 		csvwriter.Write(row)
 	}
 
-	t:= time.absClock()
-	row = []string{t.String(),strconv.FormatInt(int64(cpuStat[0].CPU), 10),strconv.FormatUint(vmStat.Total, 10),strconv.FormatUint(vmStat.Free, 10),strconv.FormatFloat(vmStat.UsedPercent, 'f', 2, 64)}
+	t:= time.Now()
+
+	s.Time = t.String()
+	s.CpuNum = cpuStat[0].CPU
+	s.TotalMem = vmStat.Total
+	s.FreeMem = vmStat.Free
+	s.MemPercent = vmStat.UsedPercent
+	s.CpuPercents = percentage
+
+	row = []string{s.Time,strconv.FormatInt(int64(s.CpuNum, 10),strconv.FormatUint(s.TotalMem, 10),strconv.FormatUint(s.FreeMem, 10),strconv.FormatFloat(s.MemPercent, 'f', 2, 64)}
 	for _,cpu := range percentage {
 		row = append(row, strconv.FormatFloat(cpu, 'f', 2, 64))
 	}
@@ -49,9 +71,13 @@ import (
 	csvwriter.Write(row)
 	csvwriter.Flush()
 	f.Close()
- }
+}
 
- func ExecuteCronJob() {
-    gocron.Every(2).Second().Do(SendMetrics)
-    <- gocron.Start()
+func ExecuteCronJob() {
+ 	for {
+ 		SendMetrics()
+ 		time.Sleep(2 * time.Second)
+	}
+    // gocron.Every(2).Second().Do(SendMetrics)
+    // <- gocron.Start()
 }
