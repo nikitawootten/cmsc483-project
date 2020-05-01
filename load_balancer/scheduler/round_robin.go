@@ -1,7 +1,6 @@
 package scheduler
 
 import (
-	"log"
 	"net/http"
 	"sync/atomic"
 )
@@ -36,6 +35,6 @@ func (rr *RoundRobinScheduler) GetNext(_ *http.Request) (*Client, error) {
 	count := atomic.AddUint32(&rr.count, 1)
 	index := int(count) % len(rr.clients)
 	ret := rr.clients[index]
-	log.Println(index, count)
+	//log.Println(index, count)
 	return ret, nil
 }

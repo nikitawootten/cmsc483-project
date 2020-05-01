@@ -40,7 +40,7 @@ func fibonacciEndpoint(w http.ResponseWriter, _ *http.Request) {
 }
 
 func resizeImageEndpoint(w http.ResponseWriter, r *http.Request) {
-	log.Println("New request - Resize image test")
+	//log.Println("New request - Resize image test")
 
 	imgIn, err := jpeg.Decode(r.Body)
 	if err != nil {
@@ -56,7 +56,7 @@ func resizeImageEndpoint(w http.ResponseWriter, r *http.Request) {
 }
 
 func helloWorldEndpoint(w http.ResponseWriter, _ *http.Request) {
-	log.Println("New request!")
+	//log.Println("New request!")
 
 	_, err := fmt.Fprint(w, "Hello there!")
 	if err != nil {

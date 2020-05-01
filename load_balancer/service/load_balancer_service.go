@@ -70,7 +70,7 @@ func (lb *LoadBalancer) BuildClientHandlerFunc() websocket.Handler {
 
 func (lb *LoadBalancer) BuildNewConnectionFunc() func(w http.ResponseWriter, r *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
-		log.Print("New Connection!")
+		//log.Print("New Connection!")
 		client, err := lb.scheduler.GetNext(r)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
