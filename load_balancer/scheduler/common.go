@@ -29,11 +29,13 @@ type IScheduler interface {
 }
 
 const (
-	RoundRobin = "round-robin"
-	Random     = "random"
+	RoundRobin       = "round-robin"
+	Random           = "random"
+	LeastConnections = "least-connections"
 )
 
 var ErrNoClients = errors.New("no clients to load balance")
+var ErrUnkSchedAlg = errors.New("unknown scheduling algorithm")
 
 func GetSchedulerByName(algorithm string) (IScheduler, error) {
 	switch algorithm {
@@ -41,7 +43,9 @@ func GetSchedulerByName(algorithm string) (IScheduler, error) {
 		return NewRoundRobinScheduler(), nil
 	case Random:
 		return NewRandomScheduler(), nil
+	case LeastConnections:
+		return NewLeastConnectionsScheduler(), nil
 	default:
-		return nil, errors.New("unknown scheduling algorithm")
+		return nil, ErrUnkSchedAlg
 	}
 }
