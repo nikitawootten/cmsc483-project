@@ -61,9 +61,9 @@ func (lb *LoadBalancer) BuildClientHandlerFunc() websocket.Handler {
 				time.Sleep(time.Second)
 				continue
 			}
-			errCount = 0
+			errCount = 0 // reset error count
 
-			// TODO update metrics
+			client.Heartbeat.Update(&heartbeat)
 		}
 	}
 }

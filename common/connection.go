@@ -10,13 +10,13 @@ import (
 const maxConnectFails = 3
 const reconnectTimeout = time.Second * 3
 
-func ConnectToParentLBs(req NewClientReq, lbs []string) {
+func ConnectToParentLBs(req NewClientReq, lbs []string, counter *ConnectionCounter) {
 	for _, lb := range lbs {
-		go MakeKnownToParent(req, lb)
+		go MakeKnownToParent(req, lb, counter)
 	}
 }
 
-func MakeKnownToParent(req NewClientReq, parentAddress string) {
+func MakeKnownToParent(req NewClientReq, parentAddress string, counter *ConnectionCounter) {
 	origin := fmt.Sprint(req.Address.String())
 	parentAddress = fmt.Sprint("ws://", parentAddress, "/client")
 
