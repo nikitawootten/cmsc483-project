@@ -124,7 +124,8 @@ func main() {
 		log.Fatal("Failed to parse args:", err)
 	}
 
-	connCount := common.NewConnectionCounter()
+	heartbeat := common.ClientHeartbeat{}
+	connCount := common.NewConnectionCounterFromHeartbeat(&heartbeat)
 
 	http.HandleFunc("/resize", connCount.WrapHttp(resizeImageEndpoint))
 	http.HandleFunc("/fib", connCount.WrapHttp(fibonacciEndpoint))
@@ -132,7 +133,7 @@ func main() {
 
 	log.Println("Mapped routes, listening on ", address)
 
-	common.ConnectToParentLBs(req, lbs)
+	common.ConnectToParentLBs(req, lbs, &heartbeat)
 
 	err = http.ListenAndServe(address, nil)
 	if err != nil {

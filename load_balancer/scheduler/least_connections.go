@@ -3,6 +3,7 @@ package scheduler
 import (
 	"math"
 	"net/http"
+	"sync/atomic"
 )
 
 type LeastConnectionsScheduler struct {
@@ -39,6 +40,9 @@ func (lc *LeastConnectionsScheduler) GetNext(_ *http.Request) (*Client, error) {
 	if minIndex == -1 {
 		return nil, ErrNoClients
 	}
+
+	// update cached least connections value with new connection count
+	atomic.AddUint32(&lc.clients[minIndex].Heartbeat.Connections, 1)
 
 	return lc.clients[minIndex], nil
 }

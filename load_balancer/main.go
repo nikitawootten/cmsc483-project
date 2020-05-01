@@ -20,7 +20,8 @@ func main() {
 	}
 	lb := service.NewLoadBalancer(alg)
 
-	connCount := common.NewConnectionCounter()
+	heartbeat := common.ClientHeartbeat{}
+	connCount := common.NewConnectionCounterFromHeartbeat(&heartbeat)
 
 	// the parent communication system (register a client, get list of active clients)
 	http.Handle("/client", lb.BuildClientHandlerFunc())
@@ -29,7 +30,7 @@ func main() {
 
 	log.Println("Mapped routes, listening on ", address)
 
-	common.ConnectToParentLBs(req, lbs)
+	common.ConnectToParentLBs(req, lbs, &heartbeat)
 
 	err = http.ListenAndServe(address, nil)
 	if err != nil {

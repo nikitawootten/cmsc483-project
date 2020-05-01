@@ -54,7 +54,7 @@ func (lb *LoadBalancer) BuildClientHandlerFunc() websocket.Handler {
 			err := websocket.JSON.Receive(ws, &heartbeat)
 			if err != nil {
 				log.Printf("Warning: Malformed heartbeat: %s, continuing\n", err.Error())
-				errCount += 1
+				errCount++
 				if errCount > 3 {
 					return // kill connection
 				}
