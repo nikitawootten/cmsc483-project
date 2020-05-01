@@ -18,7 +18,7 @@ func (cc *ConnectionCounter) WrapHttp(handler func(http.ResponseWriter, *http.Re
 	return func(w http.ResponseWriter, r *http.Request) {
 		atomic.AddUint32(cc.count, 1)
 		// defer ensures that it runs even during a panic
-		defer atomic.AddUint32(cc.count, -1)
+		defer atomic.AddUint32(cc.count, ^uint32(0)) // decrement uint32 (see https://golang.org/pkg/sync/atomic/#AddUint64)
 
 		handler(w, r)
 	}
