@@ -13,16 +13,17 @@ import (
 
 type Stats struct{
 	Time string
-	CpuNum int
-	TotalMem int
-	FreeMem int
-	MemPercent float32
-	CpuPercents []float32
+	CpuNum int32
+	TotalMem uint64
+	FreeMem uint64
+	MemPercent float64
+	CpuPercents []float64
 
 }
 
-func New(Time string, CpuNum int, TotalMem int,FreeMem int, MemPercent float32, CpuPercents []float32) Stats {  
-    s := Stats {Time, CpuNum , TotalMem ,FreeMem , MemPercent , CpuPercents}
+func New() Stats {  
+	var per []float64
+    s := Stats {"", 0 , 0, 0 , 0,per}
     return s
 }
 
@@ -63,7 +64,7 @@ func (s Stats) SendMetrics(){
 	s.MemPercent = vmStat.UsedPercent
 	s.CpuPercents = percentage
 
-	row = []string{s.Time,strconv.FormatInt(int64(s.CpuNum, 10),strconv.FormatUint(s.TotalMem, 10),strconv.FormatUint(s.FreeMem, 10),strconv.FormatFloat(s.MemPercent, 'f', 2, 64)}
+	row = []string{s.Time,strconv.FormatInt(int64(s.CpuNum),10),strconv.FormatUint(s.TotalMem, 10),strconv.FormatUint(s.FreeMem, 10),strconv.FormatFloat(s.MemPercent, 'f', 2, 64)}
 	for _,cpu := range percentage {
 		row = append(row, strconv.FormatFloat(cpu, 'f', 2, 64))
 	}
@@ -74,8 +75,9 @@ func (s Stats) SendMetrics(){
 }
 
 func ExecuteCronJob() {
+	var s Stats
  	for {
- 		SendMetrics()
+ 		s.SendMetrics()
  		time.Sleep(2 * time.Second)
 	}
     // gocron.Every(2).Second().Do(SendMetrics)

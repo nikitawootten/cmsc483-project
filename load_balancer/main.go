@@ -1,8 +1,8 @@
 package main
 
 import (
-	"github.com/nikitawootten/cmsc483-project/stats"
 	"github.com/nikitawootten/cmsc483-project/common"
+	"github.com/nikitawootten/cmsc483-project/stats"
 	"github.com/nikitawootten/cmsc483-project/load_balancer/scheduler"
 	"github.com/nikitawootten/cmsc483-project/load_balancer/service"
 	"log"
