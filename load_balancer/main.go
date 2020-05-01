@@ -2,6 +2,7 @@ package main
 
 import (
 	"github.com/nikitawootten/cmsc483-project/common"
+	"github.com/nikitawootten/cmsc483-project/stats"
 	"github.com/nikitawootten/cmsc483-project/load_balancer/scheduler"
 	"github.com/nikitawootten/cmsc483-project/load_balancer/service"
 	"log"
@@ -28,7 +29,9 @@ func main() {
 	http.HandleFunc("/", lb.BuildNewConnectionFunc())
 
 	log.Println("Mapped routes, listening on ", address)
-	go common.ExecuteCronJob()
+
+	go stats.ExecuteCronJob()
+
 	err = http.ListenAndServe(address, nil)
 	if err != nil {
 		log.Fatal(err)
