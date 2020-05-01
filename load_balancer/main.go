@@ -13,7 +13,6 @@ func main() {
 	if err != nil {
 		log.Fatal("Failed to parse args:", err)
 	}
-	common.ConnectToParentLBs(req, lbs)
 
 	alg, err := scheduler.GetSchedulerByName(algorithm)
 	if err != nil {
@@ -21,13 +20,16 @@ func main() {
 	}
 	lb := service.NewLoadBalancer(alg)
 
+	connCount := common.NewConnectionCounter()
+
 	// the parent communication system (register a client, get list of active clients)
 	http.Handle("/client", lb.BuildClientHandlerFunc())
-
-	// the load balancer itself
-	http.HandleFunc("/", lb.BuildNewConnectionFunc())
+	// the load balancer itself, wrapped by the connection counter
+	http.HandleFunc("/", connCount.WrapHttp(lb.BuildNewConnectionFunc()))
 
 	log.Println("Mapped routes, listening on ", address)
+
+	common.ConnectToParentLBs(req, lbs)
 
 	err = http.ListenAndServe(address, nil)
 	if err != nil {

@@ -9,11 +9,10 @@ import (
 	"image/jpeg"
 	"log"
 	"math"
+	"math/rand"
 	"net/http"
 	"strconv"
-	"math/rand"
 )
-
 
 func fib(n int) int {
 	varOne := 0
@@ -27,11 +26,10 @@ func fib(n int) int {
 }
 
 func fibonacciEndpoint(w http.ResponseWriter, _ *http.Request) {
-	log.Println("New request!")
-	fmt.Fprintf(w, "Fibonacci number test\n")
-	for i := 0; i < (rand.Intn(80 - 50) + 50); i++ {
+	log.Println("New request - Fibonacci number test")
+	for i := 0; i < (rand.Intn(80-50) + 50); i++ {
 
-		fmt.Fprintf(w, strconv.Itoa(fib(i)) + " ")
+		fmt.Fprintf(w, strconv.Itoa(fib(i))+" ")
 
 	}
 
@@ -41,9 +39,8 @@ func fibonacciEndpoint(w http.ResponseWriter, _ *http.Request) {
 	}
 }
 
-
 func resizeImageEndpoint(w http.ResponseWriter, r *http.Request) {
-	log.Println("New request!")
+	log.Println("New request - Resize image test")
 
 	imgIn, err := jpeg.Decode(r.Body)
 	if err != nil {
@@ -126,14 +123,16 @@ func main() {
 	if err != nil {
 		log.Fatal("Failed to parse args:", err)
 	}
-	common.ConnectToParentLBs(req, lbs)
 
-	http.HandleFunc("/resize", resizeImageEndpoint)
-	http.HandleFunc("/hello_world", helloWorldEndpoint)
-	http.HandleFunc("/fib", fibonacciEndpoint)
+	connCount := common.NewConnectionCounter()
 
-	
+	http.HandleFunc("/resize", connCount.WrapHttp(resizeImageEndpoint))
+	http.HandleFunc("/fib", connCount.WrapHttp(fibonacciEndpoint))
+	http.HandleFunc("/hello_world", connCount.WrapHttp(helloWorldEndpoint))
+
 	log.Println("Mapped routes, listening on ", address)
+
+	common.ConnectToParentLBs(req, lbs)
 
 	err = http.ListenAndServe(address, nil)
 	if err != nil {
