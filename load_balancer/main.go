@@ -9,6 +9,8 @@ import (
 )
 
 func main() {
+	http.DefaultTransport.(*http.Transport).MaxIdleConnsPerHost = 100
+
 	req, lbs, address, algorithm, err := common.ParseFlags(true)
 	if err != nil {
 		log.Fatal("Failed to parse args:", err)

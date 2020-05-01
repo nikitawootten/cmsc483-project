@@ -4,6 +4,9 @@ services:
     image: cmsc483-project/load-balancer
     ports:
       - "8080:8080"
-  client:
+  client-a:
+    image: cmsc483-project/simple-http-server
+    command: -parentLB root-lb:8080
+  client-b:
     image: cmsc483-project/simple-http-server
     command: -parentLB root-lb:8080

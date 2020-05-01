@@ -119,6 +119,8 @@ func avgColor(imgIn image.Image, minX int, maxX int, minY int, maxY int) color.C
 }
 
 func main() {
+	http.DefaultTransport.(*http.Transport).MaxIdleConnsPerHost = 100
+
 	req, lbs, address, _, err := common.ParseFlags(false)
 	if err != nil {
 		log.Fatal("Failed to parse args:", err)
