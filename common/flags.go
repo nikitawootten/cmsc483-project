@@ -3,6 +3,7 @@ package common
 import (
 	"flag"
 	"fmt"
+	"net/http"
 	"net/url"
 	"os"
 )
@@ -33,7 +34,11 @@ func ParseFlags(isLB bool) (NewClientReq, []string, string, string, error) {
 		flag.StringVar(&algorithm, "algorithm", "round-robin", "Algorithm to use for scheduling")
 	}
 
+	var maxIdleCon = flag.Int("maxIdleCon", 100, "Maximum idle http connections per host")
+
 	flag.Parse()
+
+	http.DefaultTransport.(*http.Transport).MaxIdleConnsPerHost = *maxIdleCon
 
 	req := NewClientReq{}
 

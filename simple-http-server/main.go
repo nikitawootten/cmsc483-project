@@ -26,7 +26,7 @@ func fib(n int) int {
 }
 
 func fibonacciEndpoint(w http.ResponseWriter, _ *http.Request) {
-	log.Println("New request - Fibonacci number test")
+	//log.Println("New request - Fibonacci number test")
 	for i := 0; i < (rand.Intn(80-50) + 50); i++ {
 
 		fmt.Fprintf(w, strconv.Itoa(fib(i))+" ")
@@ -119,8 +119,6 @@ func avgColor(imgIn image.Image, minX int, maxX int, minY int, maxY int) color.C
 }
 
 func main() {
-	http.DefaultTransport.(*http.Transport).MaxIdleConnsPerHost = 100
-
 	req, lbs, address, _, err := common.ParseFlags(false)
 	if err != nil {
 		log.Fatal("Failed to parse args:", err)
