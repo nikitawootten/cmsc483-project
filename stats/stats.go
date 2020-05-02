@@ -34,7 +34,10 @@ func (s Stats) SendMetrics(){
  // 	for _,cpu := range percentage {
 	// 	log.Println(strconv.FormatFloat(cpu, 'f', 6, 64))
 	// }
- 	
+	path:="logs"
+ 	if _, err := os.Stat(path); os.IsNotExist(err) {
+    	os.Mkdir(path, 0644)
+	}
 
  	var filename ="logs/process" + strconv.FormatInt(int64(cpuStat[0].CPU), 10) + "log.csv"
  	f, err := os.OpenFile(filename,os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
