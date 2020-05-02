@@ -1,10 +1,10 @@
 # Adjust the `cpuset` directives to fit the testing environment. The tests for this project were performed on a machine
-# with 12 cores (24 threads). This test evenly spreads
+# with 12 cores (24 threads). This test gives each client 1 core.
 version: "2"
 services:
   lb-root:
     image: cmsc483-project/load-balancer
-    command: -maxIdleCon 400
+    command: -maxIdleCon 400 -algorithm random
     ports:
       - "8080:8080"
     cpuset: 0,1
