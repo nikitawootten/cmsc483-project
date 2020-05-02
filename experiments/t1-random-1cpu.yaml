@@ -2,7 +2,7 @@
 # with 12 cores (24 threads). This test gives each client 1 core.
 version: "2"
 services:
-  lb-root:
+  root-lb:
     image: cmsc483-project/load-balancer
     command: -maxIdleCon 400 -algorithm random
     ports:
