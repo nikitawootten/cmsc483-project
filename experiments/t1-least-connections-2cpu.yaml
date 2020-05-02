@@ -1,0 +1,30 @@
+# Adjust the `cpuset` directives to fit the testing environment. The tests for this project were performed on a machine
+# with 12 cores (24 threads). This test gives each client 2 cores.
+version: "2"
+services:
+  lb-root:
+    image: cmsc483-project/load-balancer
+    command: -maxIdleCon 400 -algorithm least-connections
+    ports:
+      - "8080:8080"
+    cpuset: 0,1,2,3
+  client-1:
+    image: cmsc483-project/simple-http-server
+    command: -parentLB root-lb:8080 --maxIdleCon 200
+    cpuset: 4,5,6,7
+  client-2:
+    image: cmsc483-project/simple-http-server
+    command: -parentLB root-lb:8080 -maxIdleCon 200
+    cpuset: 8,9,10,11
+  client-3:
+    image: cmsc483-project/simple-http-server
+    command: -parentLB root-lb:8080 -maxIdleCon 200
+    cpuset: 12,13,14,15
+  client-4:
+    image: cmsc483-project/simple-http-server
+    command: -parentLB root-lb:8080 -maxIdleCon 200
+    cpuset: 16,17,18,19
+  client-5:
+    image: cmsc483-project/simple-http-server
+    command: -parentLB root-lb:8080 -maxIdleCon 200
+    cpuset: 20,21,22,23
