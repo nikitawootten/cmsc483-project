@@ -1,0 +1,15 @@
+# This test showcases basic functionality of the system with the default load balancer. It does not try to create any
+# reproducible testing environments. All 3 containers will be running at 100% on all cores with a load test.
+version: "3"
+services:
+  root-lb:
+    image: cmsc483-project/load-balancer
+    command: -maxIdleCon 400
+    ports:
+      - "8080:8080"
+  client-a:
+    image: cmsc483-project/simple-http-server
+    command: -parentLB root-lb:8080 --maxIdleCon 200
+  client-b:
+    image: cmsc483-project/simple-http-server
+    command: -parentLB root-lb:8080 -maxIdleCon 200
