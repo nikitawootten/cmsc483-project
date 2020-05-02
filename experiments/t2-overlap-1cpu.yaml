@@ -1,0 +1,54 @@
+# Adjust the `cpuset` directives to fit the testing environment. The tests for this project were performed on a machine
+# with 12 cores (24 threads). This test gives each client 1 core.
+version: "2"
+services:
+  root-lb:
+    image: cmsc483-project/load-balancer
+    command: -maxIdleCon 400
+    ports:
+      - "8080:8080"
+    cpuset: 0,1
+  child-lb-1:
+    image: cmsc483-project/load-balancer
+    command: -parentLB root-lb:8080 -maxIdleCon 200
+    cpuset: 18,19
+  child-lb-2:
+    image: cmsc483-project/load-balancer
+    command: -parentLB root-lb:8080 -maxIdleCon 200 -algorithm random
+    cpuset: 20,21
+  child-lb-3:
+    image: cmsc483-project/load-balancer
+    command: -parentLB root-lb:8080 -maxIdleCon 200 -algorithm least-connections
+    cpuset: 22,23
+  client-1:
+    image: cmsc483-project/simple-http-server
+    command: -parentLB child-lb-1:8080 -parentLB child-lb-2:8080 -parentLB child-lb-3:8080 --maxIdleCon 200
+    cpuset: 2,3
+  client-2:
+    image: cmsc483-project/simple-http-server
+    command: -parentLB child-lb-1:8080 -parentLB child-lb-2:8080 -parentLB child-lb-3:8080 -maxIdleCon 200
+    cpuset: 4,5
+  client-3:
+    image: cmsc483-project/simple-http-server
+    command: -parentLB child-lb-1:8080 -parentLB child-lb-2:8080 -parentLB child-lb-3:8080 -maxIdleCon 200
+    cpuset: 6,7
+  client-4:
+    image: cmsc483-project/simple-http-server
+    command: -parentLB child-lb-1:8080 -parentLB child-lb-2:8080 -parentLB child-lb-3:8080 -maxIdleCon 200
+    cpuset: 8,9
+  client-5:
+    image: cmsc483-project/simple-http-server
+    command: -parentLB child-lb-1:8080 -parentLB child-lb-2:8080 -parentLB child-lb-3:8080 -maxIdleCon 200
+    cpuset: 10,11
+  client-6:
+    image: cmsc483-project/simple-http-server
+    command: -parentLB child-lb-1:8080 -parentLB child-lb-2:8080 -parentLB child-lb-3:8080 -maxIdleCon 200
+    cpuset: 12,13
+  client-7:
+    image: cmsc483-project/simple-http-server
+    command: -parentLB child-lb-1:8080 -parentLB child-lb-2:8080 -parentLB child-lb-3:8080 -maxIdleCon 200
+    cpuset: 14,15
+  client-8:
+    image: cmsc483-project/simple-http-server
+    command: -parentLB child-lb-1:8080 -parentLB child-lb-2:8080 -parentLB child-lb-3:8080 -maxIdleCon 200
+    cpuset: 16,17

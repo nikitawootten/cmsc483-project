@@ -4,7 +4,7 @@ version: "2"
 services:
   root-lb:
     image: cmsc483-project/load-balancer
-    command: -maxIdleCon 400 -algorithm random
+    command: -maxIdleCon 400 -algorithm least-connections
     ports:
       - "8080:8080"
     cpuset: 0,1,2,3

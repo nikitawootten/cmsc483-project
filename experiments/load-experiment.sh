@@ -13,6 +13,8 @@ MIN_CLIENT_NUM=$2
 # Number of clients this experiment will test to
 MAX_CLIENT_NUM=$3
 
+OUTPUT_PREFIX=$4
+
 LOAD_BALANCER_SUFFIX="lb"
 
 SLEEP_INFRA_DURATION=5
