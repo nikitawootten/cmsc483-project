@@ -20,4 +20,4 @@ services:
     volumes:
       - logs:/tmp/
 volumes:
-  logs:
+  logs:./logs
