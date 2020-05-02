@@ -32,6 +32,7 @@ func main() {
 	log.Println("Mapped routes, listening on ", address)
 
 
+
 	common.ConnectToParentLBs(req, lbs, &heartbeat)
 
 	go stats.ExecuteCronJob()

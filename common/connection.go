@@ -65,6 +65,7 @@ func MakeKnownToParent(req NewClientReq, parentAddress string, heartbeat *Client
 
 		log.Printf("Disconnected from lb %s, sleeping before attempting to reconnect!\n", parentAddress)
 		time.Sleep(reconnectTimeout)
+
 		//log.Printf("Disconnected from lb %s, sleeping before attempting to reconnect!\n", parentAddress)
 		//time.Sleep(reconnectTimeout)t
 	}
