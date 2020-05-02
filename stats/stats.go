@@ -31,18 +31,10 @@ func (s Stats) SendMetrics(){
  	vmStat, err := mem.VirtualMemory()
  	cpuStat, err := cpu.Info()
  	percentage, err := cpu.Percent(0, true)
- // 	for _,cpu := range percentage {
-	// 	log.Println(strconv.FormatFloat(cpu, 'f', 6, 64))
-	// }
 
 	host:=os.Getenv("HOSTNAME")
 
-	// path:="/logs"
- // 	if _, err := os.Stat(path); os.IsNotExist(err) {
- //    	os.Mkdir(path, 0644)
-	// }
-
- 	var filename ="/tmp/process" + host + "log.csv"
+ 	var filename ="/" + host + "log.csv"
  	f, err := os.OpenFile(filename,os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
 	if err != nil {
 		log.Println(err)
@@ -50,8 +42,7 @@ func (s Stats) SendMetrics(){
 	fi, err := f.Stat()
 	csvwriter := csv.NewWriter(f)
 	var row = []string{}
-	//size := strconv.FormatInt(fi.Size(),10)
-	// log.Println(size + "**********************")
+
 	if fi.Size() == 0{
 		row = []string{
 		"Time","CPU NUM", "Total Mem(bytes)","Free Mem(bytes)", "Pecent Mem Usage", "CPU Util 0", "CPU Util 1", "CPU Util 2",
