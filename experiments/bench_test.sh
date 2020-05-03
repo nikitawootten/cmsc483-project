@@ -49,11 +49,11 @@ ab -g ${PREFIX}-resize2.tsv -n 5000 -c 50 -p $3 -T image/jpeg "$ADDR3"
 sleep 10
 ab -g ${PREFIX}-resize3.tsv -n 10000 -c 100 -p $3 -T image/jpeg "$ADDR3" 
 sleep 10
-wrk -s postimg.lua -t 4 -c 10 -d 10s "http://$ADDR3" >> ${PREFIX}-resize1.txt
+wrk -s postimg.lua -t 4 -c 5 -d 10s "http://$ADDR3" >> ${PREFIX}-resize1.txt
 sleep 10
-wrk -s postimg.lua -t 4 -c 20 -d 10s "http://$ADDR3" >> ${PREFIX}-resize2.txt
+wrk -s postimg.lua -t 4 -c 10 -d 10s "http://$ADDR3" >> ${PREFIX}-resize2.txt
 sleep 10
-wrk -s postimg.lua -t 4 -c 30 -d 10s "http://$ADDR3" >> ${PREFIX}-resize3.txt
+wrk -s postimg.lua -t 4 -c 20 -d 10s "http://$ADDR3" >> ${PREFIX}-resize3.txt
 
 
 
