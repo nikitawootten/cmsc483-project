@@ -14,11 +14,11 @@ ab -g ${PREFIX}-hello2.tsv -n 50000 -c 50 "$ADDR1"
 sleep 10
 ab -g ${PREFIX}-hello3.tsv -n 100000 -c 100 "$ADDR1"
 sleep 10
-wrk -t 4 -c100 -d30s "$ADDR1" >> ${PREFIX}-hello1.txt
+wrk -t 4 -c100 -d30s "http://$ADDR1" >> ${PREFIX}-hello1.txt
 sleep 10
-wrk -t 4 -c100 -d30s "$ADDR1" >> ${PREFIX}-hello2.txt
+wrk -t 4 -c100 -d30s "http://$ADDR1" >> ${PREFIX}-hello2.txt
 sleep 10
-wrk -t 4 -c100 -d30s "$ADDR1" >> ${PREFIX}-hello3.txt
+wrk -t 4 -c100 -d30s "http://$ADDR1" >> ${PREFIX}-hello3.txt
 sleep 10
 
 
@@ -31,11 +31,11 @@ ab -g ${PREFIX}-fib2.tsv -n 50000 -c 50 "$ADDR2"
 sleep 10
 ab -g ${PREFIX}-fib3.tsv -n 100000 -c 100 "$ADDR2"
 sleep 10
-wrk -t 4 -c100 -d30s "$ADDR2" >> ${PREFIX}-fib1.txt
+wrk -t 4 -c100 -d30s "http://$ADDR2" >> ${PREFIX}-fib1.txt
 sleep 10
-wrk -t 4 -c100 -d30s "$ADDR2" >> ${PREFIX}-fib2.txt
+wrk -t 4 -c100 -d30s "http://$ADDR2" >> ${PREFIX}-fib2.txt
 sleep 10
-wrk -t 4 -c100 -d30s "$ADDR2" >> ${PREFIX}-fib3.txt
+wrk -t 4 -c100 -d30s "http://$ADDR2" >> ${PREFIX}-fib3.txt
 sleep 10
 
 
@@ -49,11 +49,11 @@ ab -g ${PREFIX}-resize2.tsv -n 5000 -c 50 -p $3 -T image/jpeg "$ADDR3"
 sleep 10
 ab -g ${PREFIX}-resize3.tsv -n 10000 -c 100 -p $3 -T image/jpeg "$ADDR3" 
 sleep 10
-wrk -s postimg.lua -t 4 -c 10 -d 10s "$ADDR3" >> ${PREFIX}-resize1.txt
+wrk -s postimg.lua -t 4 -c 10 -d 10s "http://$ADDR3" >> ${PREFIX}-resize1.txt
 sleep 10
-wrk -s postimg.lua -t 4 -c 20 -d 10s "$ADDR3" >> ${PREFIX}-resize2.txt
+wrk -s postimg.lua -t 4 -c 20 -d 10s "http://$ADDR3" >> ${PREFIX}-resize2.txt
 sleep 10
-wrk -s postimg.lua -t 4 -c 30 -d 10s "$ADDR3" >> ${PREFIX}-resize3.txt
+wrk -s postimg.lua -t 4 -c 30 -d 10s "http://$ADDR3" >> ${PREFIX}-resize3.txt
 
 
 
