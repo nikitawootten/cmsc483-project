@@ -6,21 +6,22 @@
 # properly find all the relevant clients
 # Also sure that the root load balancer is accessible from localhost and runs off port 8080
 
-# The compose file to be tested
-COMPOSE_FILE=$1
-# The point at which testing begins (used to prevent starving a load balancer)
-MIN_CLIENT_NUM=$2
-# Number of clients this experiment will test to
-MAX_CLIENT_NUM=$3
+if [[ "$#" -ne 4 ]]; then
+   echo "Usage: ./load-experiment.sh <compose-file> <min client num> <max client num> <output directory>"
+   exit 2
+fi
 
-OUTPUT_PREFIX=$4
+COMPOSE_FILE=$1 # The compose file to be tested
+MIN_CLIENT_NUM=$2 # The point at which testing begins (used to prevent starving a load balancer)
+MAX_CLIENT_NUM=$3 # Number of clients this experiment will test to
+OUTPUT_ROOT=$4
 
 LOAD_BALANCER_SUFFIX="lb"
-
 SLEEP_INFRA_DURATION=5
-# amount of time to sleep between tests
-SLEEP_TEST_DURATION=30
+SLEEP_TEST_DURATION=30 # amount of time to sleep between tests
 
+# for some reason this is abstracted out?
+IMG_RESIZE_PATH="test_img.jpeg"
 ROOT_LB_ADDR="127.0.0.1:8080"
 
 echo "========== Load Test =========="
@@ -43,13 +44,17 @@ done
 sleep ${SLEEP_INFRA_DURATION}
 echo "=== Starting experiments! ==="
 
-for (( i=${MIN_CLIENT_NUM}+1; i<=${MAX_CLIENT_NUM}; i++ ))
+for ((i=${MIN_CLIENT_NUM}+1; i<=${MAX_CLIENT_NUM}; i++))
 do
     docker-compose -f ${COMPOSE_FILE} up -d --force-recreate client-${i}
     echo "Started client ${i}..."
     sleep ${SLEEP_INFRA_DURATION}
     echo "=== Starting Experiment ==="
-    # todo put experiment here
+
+    prefix="$OUTPUT_ROOT/${COMPOSE_FILE%.*}-${i}-clients"
+
+    bash bench_test.sh ${ROOT_LB_ADDR} ${prefix} ${IMG_RESIZE_PATH}
+
     echo "=== Experiment Concluded ==="
     sleep ${SLEEP_TEST_DURATION}
 done
