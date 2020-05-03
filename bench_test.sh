@@ -1,7 +1,7 @@
 #!/bin/bash
 # replace 0.0.0.0 with IP address server is on
 
-
+#$1 = address, $2 = output file prefix, $3 = image file name
 
 ADDR1=$1
 ADDR1+="/hello_world"
