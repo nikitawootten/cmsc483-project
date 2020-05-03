@@ -35,7 +35,8 @@ func fibonacciEndpoint(w http.ResponseWriter, _ *http.Request) {
 
 	_, err := fmt.Fprint(w, "\n")
 	if err != nil {
-		log.Fatal(err)
+		log.Println(err)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
 }
 
@@ -44,14 +45,16 @@ func resizeImageEndpoint(w http.ResponseWriter, r *http.Request) {
 
 	imgIn, err := jpeg.Decode(r.Body)
 	if err != nil {
-		log.Fatal(err)
+		log.Println(err)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
 
 	resizedImg := resizerFunc(imgIn, 640, 480)
 
 	err = jpeg.Encode(w, resizedImg, &jpeg.Options{Quality: 100})
 	if err != nil {
-		log.Fatal(err)
+		log.Println(err)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
 }
 
@@ -60,7 +63,8 @@ func helloWorldEndpoint(w http.ResponseWriter, _ *http.Request) {
 
 	_, err := fmt.Fprint(w, "Hello there!")
 	if err != nil {
-		log.Fatal(err)
+		log.Println(err)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
 }
 

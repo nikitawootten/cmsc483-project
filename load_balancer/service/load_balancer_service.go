@@ -73,6 +73,7 @@ func (lb *LoadBalancer) BuildNewConnectionFunc() func(w http.ResponseWriter, r *
 		//log.Print("New Connection!")
 		client, err := lb.scheduler.GetNext(r)
 		if err != nil {
+			log.Println(err)
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 		} else {
 			client.Proxy.ServeHTTP(w, r)
