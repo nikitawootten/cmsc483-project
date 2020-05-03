@@ -18,7 +18,7 @@ OUTPUT_ROOT=$4
 
 LOAD_BALANCER_SUFFIX="lb"
 SLEEP_INFRA_DURATION=5
-SLEEP_TEST_DURATION=15 # amount of time to sleep between tests
+SLEEP_TEST_DURATION=10 # amount of time to sleep between tests
 
 # for some reason this is abstracted out?
 IMG_RESIZE_PATH="test_img.jpeg"
