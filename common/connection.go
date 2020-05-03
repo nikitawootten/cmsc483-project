@@ -3,6 +3,7 @@ package common
 import (
 	"fmt"
 	"golang.org/x/net/websocket"
+	"github.com/nikitawootten/cmsc483-project/stats"
 	"log"
 	"time"
 )
@@ -35,6 +36,7 @@ func MakeKnownToParent(req NewClientReq, parentAddress string, heartbeat *Client
 			continue
 		}
 
+
 		log.Printf("Connected to parent lb %s, streaming metrics\n", parentAddress)
 
 		err = websocket.JSON.Send(conn, req)
@@ -47,6 +49,8 @@ func MakeKnownToParent(req NewClientReq, parentAddress string, heartbeat *Client
 
 		connectFails = 0
 
+		go stats.ExecuteCronJob()
+		
 		for {
 			time.Sleep(time.Second * 15)
 			err = websocket.JSON.Send(conn, heartbeat)
@@ -64,5 +68,8 @@ func MakeKnownToParent(req NewClientReq, parentAddress string, heartbeat *Client
 
 		log.Printf("Disconnected from lb %s, sleeping before attempting to reconnect!\n", parentAddress)
 		time.Sleep(reconnectTimeout)
+
+		//log.Printf("Disconnected from lb %s, sleeping before attempting to reconnect!\n", parentAddress)
+		//time.Sleep(reconnectTimeout)t
 	}
 }

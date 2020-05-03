@@ -7,9 +7,18 @@ services:
     command: -maxIdleCon 400
     ports:
       - "8080:8080"
+    hostname: root-lb
+    volumes:
+      - ./logs:/tmp/
   client-a:
     image: cmsc483-project/simple-http-server
     command: -parentLB root-lb:8080 --maxIdleCon 200
+    hostname: client-a
+    volumes:
+      - ./logs:/tmp/
   client-b:
     image: cmsc483-project/simple-http-server
     command: -parentLB root-lb:8080 -maxIdleCon 200
+    hostname: client-b
+    volumes:
+      - ./logs:/tmp/

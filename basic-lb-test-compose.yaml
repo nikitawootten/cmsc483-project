@@ -1,0 +1,21 @@
+version: "2"
+services:
+  root-lb:
+    image: cmsc483-project/load-balancer
+    hostname: root-lb
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./logs:/tmp/
+  client-a:
+    image: cmsc483-project/simple-http-server
+    command: -parentLB root-lb:8080
+    hostname: client-a
+    volumes:
+      - ./logs:/tmp/
+  client-b:
+    image: cmsc483-project/simple-http-server
+    command: -parentLB root-lb:8080
+    hostname: client-b
+    volumes:
+      - ./logs:/tmp/
